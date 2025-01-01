@@ -1,0 +1,5 @@
+diff -urN libiconv-1.9.1_orig/configure_libiconv_mipsel-uclibc libiconv-1.9.1_mipsel-uclibc/configure_libiconv_mipsel-uclibc
+--- libiconv-1.9.1_orig/configure_libiconv_mipsel-uclibc	1969-12-31 19:00:00.000000000 -0500
++++ libiconv-1.9.1_mipsel-uclibc/configure_libiconv_mipsel-uclibc	2005-09-09 16:01:36.142640628 -0400
+@@ -0,0 +1 @@
++CFLAGS=${CROSS_CFLAGS} CPPFLAGS=${CROSS_CPPFLAGS} LDFLAGS=${CROSS_LDFLAGS} CC=${CROSS}gcc CPP=${CROSS}cpp CXX=${CROSS}g++ LD=${CROSS}ld AR=${CROSS}ar RANLIB=${CROSS}ranlib STRIP=${CROSS}strip ./configure --enable-shared --enable-static --build=i686-pc-linux-gnu --host=mipsel-uclibc-gnu

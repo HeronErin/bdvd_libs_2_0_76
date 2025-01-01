@@ -1,0 +1,59 @@
+diff -urN freetype-2.3.4_orig/builds/unix/configure freetype-2.3.4_mipsel-uclibc/builds/unix/configure
+--- freetype-2.3.4_orig/builds/unix/configure	2005-06-08 08:25:20.000000000 -0400
++++ freetype-2.3.4_mipsel-uclibc/builds/unix/configure	2006-01-10 13:04:27.104128199 -0500
+@@ -9809,7 +9809,7 @@
+     # are reset later if shared libraries are not supported. Putting them
+     # here allows them to be overridden if necessary.
+     runpath_var=LD_RUN_PATH
+-    hardcode_libdir_flag_spec='${wl}--rpath ${wl}$libdir'
++    hardcode_libdir_flag_spec='${wl}--rpath ${wl}${exec_prefix}/lib'
+     export_dynamic_flag_spec='${wl}--export-dynamic'
+     # ancient GNU ld didn't support --whole-archive et. al.
+     if $LD --help 2>&1 | grep 'no-whole-archive' > /dev/null; then
+diff -urN freetype-2.3.4_orig/builds/unix/freetype2.in freetype-2.3.4_mipsel-uclibc/builds/unix/freetype2.in
+--- freetype-2.3.4_orig/builds/unix/freetype2.in	2003-06-01 17:30:03.000000000 -0400
++++ freetype-2.3.4_mipsel-uclibc/builds/unix/freetype2.in	2006-01-10 13:01:07.836554834 -0500
+@@ -1,7 +1,7 @@
+ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+-libdir=@libdir@
+-includedir=@includedir@
++libdir=${DIRECTFB_INSTALL_PATH}@libdir@
++includedir=${DIRECTFB_INSTALL_PATH}@includedir@
+ 
+ Name: FreeType 2
+ Description: A free, high-quality, and portable font engine.
+diff -urN freetype-2.3.4_orig/builds/unix/freetype-config.in freetype-2.3.4_mipsel-uclibc/builds/unix/freetype-config.in
+--- freetype-2.3.4_orig/builds/unix/freetype-config.in	2005-06-04 17:58:48.000000000 -0400
++++ freetype-2.3.4_mipsel-uclibc/builds/unix/freetype-config.in	2006-01-10 13:01:07.874552083 -0500
+@@ -12,8 +12,8 @@
+ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+ exec_prefix_set=no
+-includedir=@includedir@
+-libdir=@libdir@
++includedir=${DIRECTFB_INSTALL_PATH}@includedir@
++libdir=${DIRECTFB_INSTALL_PATH}@libdir@
+ enable_shared=@enable_shared@
+ wl=@wl@
+ hardcode_libdir_flag_spec='@hardcode_libdir_flag_spec@'
+@@ -119,11 +119,11 @@
+ fi
+ 
+ if test "$exec_prefix_set" = "yes" ; then
+-  libdir=$exec_prefix/lib
++  libdir=${DIRECTFB_INSTALL_PATH}$exec_prefix/lib
+ else
+   if test "$local_prefix" = "yes" ; then
+-    includedir=$prefix/include
+-    libdir=$prefix/lib
++    includedir=${DIRECTFB_INSTALL_PATH}$prefix/include
++    libdir=${DIRECTFB_INSTALL_PATH}$prefix/lib
+   fi
+ fi
+ 
+diff -urN freetype-2.3.4_orig/configure_freetype2_mipsel-uclibc freetype-2.3.4_mipsel-uclibc/configure_freetype2_mipsel-uclibc
+--- freetype-2.3.4_orig/configure_freetype2_mipsel-uclibc	1969-12-31 19:00:00.000000000 -0500
++++ freetype-2.3.4_mipsel-uclibc/configure_freetype2_mipsel-uclibc	2006-01-10 13:01:07.874552083 -0500
+@@ -0,0 +1 @@
++CFLAGS=${CROSS_CFLAGS} CPPFLAGS=${CROSS_CPPFLAGS} LDFLAGS=${CROSS_LDFLAGS} CC=${CROSS}gcc CPP=${CROSS}cpp CXX=${CROSS}g++ LD=${CROSS}ld AR=${CROSS}ar RANLIB=${CROSS}ranlib STRIP=${CROSS}strip ./configure --enable-shared --enable-static --build=i386-pc-linux-gnu --host=mipsel-uclibc-gnu

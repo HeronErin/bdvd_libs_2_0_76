@@ -1,0 +1,82 @@
+#!/bin/bash
+
+REMOTE_DOWNLOAD_WIRELESS_ADAPTER=a5c\/bd13
+BCMUSB_802_11_WIRELESS_ADAPTER=a5c\/bdc
+
+
+notify_app ()
+{
+  export PATH=$PATH:/usr/local/bin
+  if which app_player_notify >/dev/null; then
+    mesg "Sending WiFi driver notification"
+    ETHIF=$(/usr/wlan/wl dump | grep wlif | awk -F" " '{print $7}' | sed -e "s/\"//g")
+    app_player_notify $1 $2 $ETHIF
+  else
+    mesg "app_player_notify not installed, skip notification"
+  fi
+}  
+
+
+download_firmware ()
+{
+  mesg "Installing BRCM WiFi Firmware"
+  if ! mount | grep proc\/bus\/usb >/dev/null ; then
+    mount -t usbfs none /proc/bus/usb
+  fi
+  /usr/wlan/bcmdl /usr/wlan/rtecdc.trx
+}
+
+  
+install_driver ()
+{
+  mesg "Installing BRCM WiFi Driver"
+  insmod /usr/wlan/wl_usb.ko
+  # give time for the interface to come up so we can use "wl" to
+  # determine which eth it's connect to.
+  sleep 1
+  notify_app 3 add
+}
+
+  
+remove_driver ()
+{
+  mesg "Uninstalling BRCM WiFi driver"
+  notify_app 4 remove
+  rmmod wl
+}
+  
+
+# Setup a logging system - taken from hotplug.functions
+if [ -x /usr/bin/logger ]; then
+  LOGGER=/usr/bin/logger
+elif [ -x /bin/logger ]; then
+  LOGGER=/bin/logger
+else
+  unset LOGGER
+fi
+
+if [ -t 1 -o -z "$LOGGER" ]; then
+  mesg () {
+    echo "$@"
+  }
+else
+  mesg () {
+    $LOGGER -t $(basename $0)"[$$]" "$@"
+  }
+fi
+
+
+# Parse the hotplug event
+if echo $DEVTYPE | grep -q "usb_interface" >/dev/null ; then
+  if echo $ACTION | grep -q "add" >/dev/null ; then
+    if echo $PRODUCT | grep -q "$REMOTE_DOWNLOAD_WIRELESS_ADAPTER" >/dev/null ; then
+      download_firmware
+    elif echo $PRODUCT | grep -q "$BCMUSB_802_11_WIRELESS_ADAPTER" >/dev/null ; then
+      install_driver
+    fi
+  elif echo $ACTION | grep -q "remove" >/dev/null ; then
+    if echo $PRODUCT | grep -q "$BCMUSB_802_11_WIRELESS_ADAPTER" >/dev/null ; then
+      remove_driver
+    fi
+  fi
+fi

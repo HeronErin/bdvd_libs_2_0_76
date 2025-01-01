@@ -1,0 +1,25 @@
+mount -t usbfs none /proc/bus/usb
+bcmdl rtecdc.trx
+insmod wl_usb.ko
+if [ "$1"x = "x" ] ; then
+	 SID="broadcom_wifi_demo"
+else
+	 SID="$1"
+fi
+if [ "$SID" = "wps" ] ; then
+    ifconfig eth1 up
+    echo "Wireless startup"
+    echo "  Please press the \"Wi-Fi Protected Setup\" button"
+    echo "  on the Wi-Fi router that you would like to use"
+    echo "  for you wireless network."
+    wpsenr -if eth1 -pb
+else
+    wl up
+    sleep 1
+    wl join $SID
+fi
+wl rpc_agg 3
+dhcpcd -d eth1
+echo "Wireless Network is UP"
+
+
